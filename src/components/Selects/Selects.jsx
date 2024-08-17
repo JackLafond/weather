@@ -20,7 +20,7 @@ export default function Selects(props) {
 
     const getStateopts = () => {
         let state_options = [];
-        d3.csv('src/data/states.csv').then((data) => {
+        d3.csv('weather/src/data/states.csv').then((data) => {
             data.forEach((d) => {
                 state_options.push({label: d.State, value: d.Abbreviation});
             });
@@ -30,7 +30,7 @@ export default function Selects(props) {
 
     const getTownopts = () => {
         let town_options = [];
-        d3.csv('src/data/state_towns/' + props.curstate.value + '.csv').then((data) => {
+        d3.csv('weather/src/data/state_towns/' + props.curstate.value + '.csv').then((data) => {
             data.forEach((d) => {
                 town_options.push({label: d.name, value: d.name + ' ' + d.latitude + ' ' + d.longitude});
             });
