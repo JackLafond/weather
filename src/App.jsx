@@ -5,11 +5,14 @@ import Selects from './components/Selects/Selects'
 import Temp from './components/Temp/Temp'
 import TempLineChart from './components/TempLineChart/TempLineChart'
 import PrecipitationLineChart from './components/PrecipitationLineChart/PrecipitationLineChart'
+import Week from './components/Week/Week'
 
 function App() {
   const [curstate, setCurstate] = useState({label:'Massachusetts', value:'MA'});
   const [curtown, setCurtown] = useState({label:'Worcester', value:'Worcester 42.2626 -71.8023'});
   const [data, setData] = useState(null);
+  const [myDay, setMyDay] = useState()
+  const [dayAhead, setDayAhead] = useState();
   const [temps, setTemps] = useState([]);
   const [hours, setHours] = useState([]);
 
@@ -56,9 +59,10 @@ function App() {
     return (
       <div id='app'>
         <Selects curstate={curstate} curtown={curtown} setCurstate={setCurstate} setCurtown={setCurtown}></Selects>
-        <Temp data={data}></Temp>
-        <TempLineChart data={data}></TempLineChart>
-        <PrecipitationLineChart data={data}></PrecipitationLineChart>
+        <Week myDay={myDay} dayAhead={dayAhead} setMyDay={setMyDay} setDayAhead={setDayAhead}></Week>
+        <Temp dayAhead={dayAhead} data={data}></Temp>
+        <TempLineChart dayAhead={dayAhead} data={data}></TempLineChart>
+        <PrecipitationLineChart dayAhead={dayAhead} data={data}></PrecipitationLineChart>
       </div>
     )
   } else {

@@ -10,6 +10,7 @@ export default function Temp(props) {
     const [wind, setWind] = useState(null);
     const [uv, setUv] = useState(null);
     const [humid, setHumid] = useState(null);
+    const [rainfall, setRainfall] = useState(null);
 
 
     useEffect(() => {
@@ -18,7 +19,7 @@ export default function Temp(props) {
 
     useEffect(() => {
         getData();
-    }, [props.data]);
+    }, [props.data, props.dayAhead]);
 
     useEffect(() => {
         remakeChart = () => {
@@ -34,7 +35,16 @@ export default function Temp(props) {
 
         try {
 
-            var now = new Date();
+            let starth = 0
+            let stoph = 24
+            var now = new Date()
+
+            if(props.dayAhead || props.dayAhead == 0) {
+                starth = 0 + (props.dayAhead * 24)
+                stoph = 24 + (props.dayAhead * 24)
+                now.setDate(now.getDate() + props.dayAhead)
+            }
+
             now.setMinutes(0, 0, 0)
 
             var ix = 0;
@@ -45,30 +55,37 @@ export default function Temp(props) {
                 }
             }
 
-            var minTemp = d3.min(props.data.hourly.temperature_2m.slice(0, 24));
-            var maxTemp = d3.max(props.data.hourly.temperature_2m.slice(0, 24));
+            var minTemp = d3.min(props.data.hourly.temperature_2m.slice(starth, stoph));
+            var maxTemp = d3.max(props.data.hourly.temperature_2m.slice(starth, stoph));
             var curTemp = props.data.current.temperature_2m;
+            if(props.dayAhead > 0) {
+                curTemp = props.data.hourly.temperature_2m[ix]
+            }
     
             setTemp([minTemp, curTemp, maxTemp]);
             makeChart([minTemp, curTemp, maxTemp], 'temp');
 
-            var minPrecip = d3.min(props.data.hourly.precipitation_probability.slice(0, 24));
-            var maxPrecip = d3.max(props.data.hourly.precipitation_probability.slice(0, 24));
+            var minPrecip = d3.min(props.data.hourly.precipitation_probability.slice(starth, stoph));
+            var maxPrecip = d3.max(props.data.hourly.precipitation_probability.slice(starth, stoph));
             var curPrecip = props.data.hourly.precipitation_probability[ix];
 
             setPrecip([minPrecip, curPrecip, maxPrecip]);
             makeChart([minPrecip, curPrecip, maxPrecip], 'precip');
 
-            var minCover = d3.min(props.data.hourly.cloud_cover.slice(0, 24));
-            var maxCover = d3.max(props.data.hourly.cloud_cover.slice(0, 24));
+            var minCover = d3.min(props.data.hourly.cloud_cover.slice(starth, stoph));
+            var maxCover = d3.max(props.data.hourly.cloud_cover.slice(starth, stoph));
             var curCover = props.data.current.cloud_cover;
+            if(props.dayAhead > 0) {
+                curCover = props.data.hourly.cloud_cover[ix]
+            }
 
             setCover([minCover, curCover, maxCover]);
             makeChart([minCover, curCover, maxCover], 'cover');
 
-            setUv(props.data.daily.uv_index_max[0]);
-            setWind(props.data.daily.wind_speed_10m_max[0]);
-            setHumid(d3.max(props.data.hourly.relative_humidity_2m.slice(0, 24)))
+            setUv(props.data.daily.uv_index_max[props.dayAhead]);
+            setWind(props.data.daily.wind_speed_10m_max[props.dayAhead]);
+            setHumid(d3.max(props.data.hourly.relative_humidity_2m.slice(starth, stoph)));
+            setRainfall(d3.sum(props.data.hourly.precipitation.slice(starth, stoph)));
 
         } catch (error) {
             console.error('Error fetching data:', error.message);
@@ -151,6 +168,10 @@ export default function Temp(props) {
                     <h3>Current Precip</h3>
                     <p>{precip[1] + '%'}</p>
                     <div id='precip-range-chart'></div>
+                </div>
+                <div className='vertical-container component-wrapper center-content'>
+                    <h3>Total Rainfall</h3>
+                    <p>{rainfall + '\"'}</p>
                 </div>
                 <div className='vertical-container component-wrapper center-content'>
                     <h3>Current Cover</h3>

@@ -12,22 +12,30 @@ export default function PrecipitationLineChart(props) {
 
     useEffect(() => {
         makeChart();
-    }, [props.data]);
+    }, [props.data, props.dayAhead]);
 
     const makeChart = async () => {
 
         try {
 
+            let starth = 0
+            let stoph = 24
+
+            if(props.dayAhead) {
+                starth = 0 + (props.dayAhead * 24)
+                stoph = 24 + (props.dayAhead * 24)
+            }
+
             // clear any previous charts
             d3.select("#precipitation-line-chart").selectAll("svg").remove();
 
-            const probs = props.data.hourly.precipitation_probability.slice(0, 24);
-            const sums = props.data.hourly.precipitation.slice(0, 24);
+            const probs = props.data.hourly.precipitation_probability.slice(starth, stoph);
+            const sums = props.data.hourly.precipitation.slice(starth, stoph);
 
             let currentWidth = parseInt(d3.select('#precipitation-line-chart').style('width'));
             let currentHeight = currentWidth/2;
 
-            var margin = {top: currentHeight/10, right: currentWidth/10, bottom: currentHeight/5, left: currentWidth/10 },
+            var margin = {top: currentHeight/10, right: currentWidth/7.5, bottom: currentHeight/5, left: currentWidth/10 },
                 width = currentWidth - margin.left - margin.right,
                 height = currentHeight - margin.top - margin.bottom;
 
