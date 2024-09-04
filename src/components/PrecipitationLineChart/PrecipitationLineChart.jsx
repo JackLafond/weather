@@ -6,15 +6,15 @@ export default function PrecipitationLineChart(props) {
 
     useEffect(() => {
         makeChart();
-        window.addEventListener('resize', makeChart);
-        return () => window.removeEventListener('resize', makeChart);
+        window.addEventListener('resize', makeChart());
+        return () => window.removeEventListener('resize', makeChart());
     }, []);
 
     useEffect(() => {
         makeChart();
     }, [props.data, props.dayAhead]);
 
-    const makeChart = async () => {
+    function makeChart() {
 
         try {
 

@@ -39,7 +39,7 @@ export default function Temp(props) {
             let stoph = 24
             var now = new Date()
 
-            if(props.dayAhead || props.dayAhead == 0) {
+            if(props.dayAhead && props.dayAhead > 0) {
                 starth = 0 + (props.dayAhead * 24)
                 stoph = 24 + (props.dayAhead * 24)
                 now.setDate(now.getDate() + props.dayAhead)
@@ -82,10 +82,16 @@ export default function Temp(props) {
             setCover([minCover, curCover, maxCover]);
             makeChart([minCover, curCover, maxCover], 'cover');
 
-            setUv(props.data.daily.uv_index_max[props.dayAhead]);
-            setWind(props.data.daily.wind_speed_10m_max[props.dayAhead]);
+            if(props.dayAhead) {
+                setUv(props.data.daily.uv_index_max[props.dayAhead]);
+                setWind(props.data.daily.wind_speed_10m_max[props.dayAhead]);
+            } else {
+                setUv(props.data.daily.uv_index_max[0]);
+                setWind(props.data.daily.wind_speed_10m_max[0]);
+            }
+
             setHumid(d3.max(props.data.hourly.relative_humidity_2m.slice(starth, stoph)));
-            setRainfall(d3.sum(props.data.hourly.precipitation.slice(starth, stoph)));
+            setRainfall(d3.sum(props.data.hourly.precipitation.slice(starth, stoph)).toFixed(2));
 
         } catch (error) {
             console.error('Error fetching data:', error.message);

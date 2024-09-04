@@ -6,15 +6,15 @@ export default function TempLineChart(props) {
 
     useEffect(() => {
         makeChart();
-        window.addEventListener('resize', makeChart);
-        return () => window.removeEventListener('resize', makeChart);
+        window.addEventListener('resize', makeChart());
+        return () => window.removeEventListener('resize', makeChart());
     }, []);
 
     useEffect(() => {
         makeChart();
     }, [props.data, props.dayAhead]);
 
-    const makeChart = async () => {
+    function makeChart() {
 
         try {
 
@@ -29,7 +29,7 @@ export default function TempLineChart(props) {
             // clear any previous charts
             d3.select("#temp-line-chart").selectAll("svg").remove();
 
-            const temps = props.data.hourly.temperature_2m.slice(starth, stoph);
+            let temps = props.data.hourly.temperature_2m.slice(starth, stoph);
 
             let currentWidth = parseInt(d3.select('#precipitation-line-chart').style('width'));
             let currentHeight = currentWidth/2;
